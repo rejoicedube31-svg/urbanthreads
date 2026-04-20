@@ -1,16 +1,17 @@
+import { auth } from "./firebase.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
 const cartContainer = document.querySelector("#cart-items");
 const totalDisplay = document.querySelector("#total");
 
-// Load cart from localStorage
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-// FUNCTION: Render cart
 function renderCart() {
   cartContainer.innerHTML = "";
 
   let total = 0;
 
- if (cart.length === 0) {
+  if (cart.length === 0) {
     cartContainer.innerHTML = "<p>Your cart is empty</p>";
     totalDisplay.textContent = "Total: $0";
     return;
@@ -31,17 +32,24 @@ function renderCart() {
     cartContainer.appendChild(div);
   });
 
-  totalDisplay.textContent = "Total: R" + total.toFixed(2);
+  totalDisplay.textContent = "Total: $" + total.toFixed(2);
 }
 
-// FUNCTION: Remove item
 window.removeItem = (index) => {
   cart.splice(index, 1);
-
   localStorage.setItem("cart", JSON.stringify(cart));
-
   renderCart();
 };
 
-// Initial render
-renderCart();
+// 🔐 AUTH GUARD (controls access)
+const cartPage = document.querySelector("#cart-page");
+
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    alert("Please log in to view your cart");
+    window.location.href = "login.html";
+  } else {
+    cartPage.style.display = "block"; // ✅ show page ONLY now
+    renderCart();
+  }
+});
