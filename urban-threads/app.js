@@ -1,54 +1,67 @@
-
 import { app, db, auth } from "./firebase.js";
 import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+// 🧠 Load saved cart (optional debug)
 const savedCart = JSON.parse(localStorage.getItem("cart")) || [];
-
 savedCart.forEach(item => {
   console.log("Loaded item:", item.name);
 });
 
-// step 1: Select elements
+// 🧱 DOM ELEMENTS
 const button = document.querySelector('#clickBtn');
 const message = document.querySelector('#message');
 const productList = document.querySelector('#product-list');
 
 
-// FUNCTION: Add to Cart
+// 🔥 ADD TO CART (FIXED VERSION)
 window.addToCart = (product) => {
-  // Get existing cart
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  // Add new product
-  cart.push(product);
+  const existingItem = cart.find(item => item.name === product.name);
 
-  // Save back to localStorage
+  if (existingItem) {
+    existingItem.quantity += 1;
+  } else {
+    cart.push({
+      name: product.name,
+      price: product.price,
+      quantity: 1
+    });
+  }
+
   localStorage.setItem("cart", JSON.stringify(cart));
 
-  console.log("Cart:", cart);
+  console.log("Cart updated:", cart);
 };
 
-// Function to display products
 
+// 🧾 LOAD PRODUCTS FROM FIREBASE
 async function loadProducts() {
-    const querySnapshot = await getDocs(collection(db, "products"));
+  const querySnapshot = await getDocs(collection(db, "products"));
 
-    productList.innerHTML = '';
+  productList.innerHTML = "";
 
-    querySnapshot.forEach((doc) => {
-        const product = doc.data();
+  querySnapshot.forEach((doc) => {
+    const product = doc.data();
 
-        const productDiv = document.createElement('div');
-        productDiv.classList.add('product');
+    const productDiv = document.createElement('div');
+    productDiv.classList.add('product');
 
-        productDiv.innerHTML = `
-            <h3>${product.name}</h3>
-            <p>$${product.price}</p>
-            <button onclick='addToCart(${JSON.stringify(product)})'>Add to Cart</button>
-        `;
+    productDiv.innerHTML = `
+      <h3>${product.name}</h3>
+      <p>$${product.price}</p>
+    `;
 
-        productList.appendChild(productDiv);
-    });
+    const button = document.createElement("button");
+    button.textContent = "Add to Cart";
+
+    // SAFE event binding (NO JSON stringify issues)
+    button.onclick = () => addToCart(product);
+
+    productDiv.appendChild(button);
+    productList.appendChild(productDiv);
+  });
 }
 
+// 🚀 INIT PRODUCTS
 loadProducts();
