@@ -1,5 +1,6 @@
 import { app, db, auth } from "./firebase.js";
 import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 // 🧠 Load saved cart (optional debug)
 const savedCart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -65,3 +66,10 @@ async function loadProducts() {
 
 // 🚀 INIT PRODUCTS
 loadProducts();
+
+onAuthStateChanged(auth, (user) => {
+  const userDisplay = document.querySelector("#user-email");
+  if (user && userDisplay) {
+    userDisplay.textContent = user.email;
+  }
+});
