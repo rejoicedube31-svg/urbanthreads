@@ -36,7 +36,7 @@ h1 {
 /* 🛍️ PRODUCT GRID */
 #product-list {
     display: grid;
-    grid-template-columns: repeat(2, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto, minmax(220px, 1fr));
     gap: 100px;
     padding: 200px 200px 200px 300px;
     align-items: center;
