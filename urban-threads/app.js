@@ -2,6 +2,7 @@ import { app, db, auth } from "./firebase.js";
 import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
+
 // 🧠 Load saved cart (optional debug)
 const savedCart = JSON.parse(localStorage.getItem("cart")) || [];
 savedCart.forEach(item => {
@@ -12,6 +13,8 @@ savedCart.forEach(item => {
 const button = document.querySelector('#clickBtn');
 const message = document.querySelector('#message');
 const productList = document.querySelector('#product-list');
+const shopMessage = document.querySelector("#shop-message");
+
 
 
 // 🔥 ADD TO CART (FIXED VERSION)
@@ -49,9 +52,10 @@ async function loadProducts() {
     productDiv.classList.add('product');
 
     productDiv.innerHTML = `
-      <h3>${product.name}</h3>
-      <p>$${product.price}</p>
-    `;
+    <img src="${product.imageURL}" alt="${product.name}" style="width:100%; height:150px; object-fit:cover; border-radius:8px;">
+    <h3>${product.name}</h3>
+    <p>R${product.price}</p>
+`;
 
     const button = document.createElement("button");
     button.textContent = "Add to Cart";
@@ -65,7 +69,19 @@ async function loadProducts() {
 }
 
 // 🚀 INIT PRODUCTS
-loadProducts();
+onAuthStateChanged(auth, (user) => {
+
+  if (!user) {
+    shopMessage.textContent = "🔒 Please go to home and sign in to shop";
+    productList.style.display = "none";
+    return;
+  }
+
+  shopMessage.textContent = "Welcome to Urban Threads";
+  productList.style.display = "block";
+
+  loadProducts(); // your existing function
+});;
 
 onAuthStateChanged(auth, (user) => {
   const userDisplay = document.querySelector("#user-email");

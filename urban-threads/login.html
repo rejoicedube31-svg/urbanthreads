@@ -3,22 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <title>Login</title>
+  <link rel="icon" href="./resources/favicon.jpeg" type="image/jpeg">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <h1>Login</h1>
+  
+  <h1 class="login">Signin / Signout</h1>
 
   <form id="authForm">
+
+    <button type="button" onclick="location.href='index.html'">
+      Go to Home
+    </button>
+    
     <input type="email" id="email" placeholder="Email">
     <input type="password" id="password" placeholder="Password">
 
-    <button type="button" id="signupBtn">Sign Up</button>
-    <button type="button" id="loginBtn">Login</button>
-    <button type="button" id="logoutBtn">Logout</button>
+    <button type="button" id="signupBtn">SignUp</button>
+    <button type="button" id="loginBtn">Signin</button>
+    <button type="button" id="logoutBtn">Signout</button>
   </form>
+
 
   <p id="userInfo"></p>
 
   <script type="module" src="auth.js"></script>
+  <script type="module" src="login.js"></script>
 </body>
 </html>
